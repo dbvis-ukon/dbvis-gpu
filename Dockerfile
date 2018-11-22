@@ -110,7 +110,7 @@ RUN pip install rise && \
 # ENV JUPYTERHUB_API_TOKEN=DBVIS
 ENV JUPYTERHUB_API_TOKEN=DBVIS \
     NB_USER=dbvis \
-    NB_GID=1002
+    NB_GID=1010
 
 RUN useradd -m $NB_USER
 RUN groupmod -g $NB_GID $NB_USER
