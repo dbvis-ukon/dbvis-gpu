@@ -83,7 +83,7 @@ RUN pip install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp35-cp35m-linu
     pip install torchvision
 
 # Install networkX
-RUN pip install networkx
+RUN pip install networkx python-louvain
 
 # TensorBoard
 EXPOSE 6006
