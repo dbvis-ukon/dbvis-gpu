@@ -82,6 +82,9 @@ RUN apt-get update && apt-get install -y \
 RUN pip install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp35-cp35m-linux_x86_64.whl && \
     pip install torchvision
 
+# Install networkX
+RUN pip install networkx
+
 # TensorBoard
 EXPOSE 6006
 # IPython
