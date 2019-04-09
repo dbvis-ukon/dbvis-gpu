@@ -33,8 +33,11 @@ RUN apt-get update && apt-get install -y \
 	rm -rf /var/lib/apt/lists/*
 
 # Install IRKernel
-RUN R -e "install.packages(c('crayon', 'pbdZMQ', 'devtools', 'IRdisplay'), repos='https://ftp.fau.de/cran/')"
+RUN R -e "install.packages(c('crayon', 'pbdZMQ', 'devtools', 'IRdisplay'), repos='http://cran.us.r-project.org')"
 RUN R -e "devtools::install_github(paste0('IRkernel/', c('repr', 'IRdisplay', 'IRkernel')))"
+
+# Install virtualenv to let users install more libs
+RUN pip install -U virtualenv
 
 # Install KERAS + SCIKIT + Data Science Libs
 RUN pip install -U \
@@ -43,7 +46,7 @@ RUN pip install -U \
 		numpy \
 		keras \
 		scikit-learn \
-		psycopg2 \
+		psycopg2-binary \
 		sqlalchemy \
 		bokeh \
 		matplotlib \
@@ -55,10 +58,8 @@ RUN pip install -U \
 		xgboost \
 		catboost \
 		opencv-python \
-        bash_kernel \
-		tqdm
-
-RUN pip install tslearn
+		tqdm \
+		tslearn
 
 # Install OpenCV + HDF5
 RUN apt-get update && apt-get install -y \
@@ -79,7 +80,7 @@ RUN apt-get update && apt-get install -y \
 	rm -rf /var/lib/apt/lists/*
 
 # Install PYTORCH
-RUN pip install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp35-cp35m-linux_x86_64.whl && \
+RUN pip install https://download.pytorch.org/whl/cu100/torch-1.0.1.post2-cp35-cp35m-linux_x86_64.whl && \
     pip install torchvision
 
 # TensorBoard
@@ -90,9 +91,6 @@ EXPOSE 8888
 # Init jupyterhub and include r
 RUN pip install -U jupyter jupyterhub && \
     R -e "IRkernel::installspec(user = FALSE)"
-
-RUN python3 -m bash_kernel.install
-
 
 # Add additional Jupyterhub extensions
 RUN pip install jupyter_contrib_nbextensions && \
@@ -106,14 +104,10 @@ RUN pip install rise && \
     jupyter-nbextension install rise --py --sys-prefix
 
 # JH Settings and new pseudo user
-# NB_GID to jupyterhubuser group id for Kubernetes node 
-# ENV JUPYTERHUB_API_TOKEN=DBVIS
 ENV JUPYTERHUB_API_TOKEN=DBVIS \
-    NB_USER=dbvis \
-    NB_GID=1002
+    NB_USER=dbvis
 
 RUN useradd -m $NB_USER
-RUN groupmod -g $NB_GID $NB_USER
 
 COPY singleuser.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/singleuser.sh
@@ -135,4 +129,3 @@ RUN jupyter contrib nbextension install --user && \
     jupyter tensorboard enable --user && \
     jupyter nbextension enable --py nbzip && \
     jupyter nbextension enable --py rise
-
