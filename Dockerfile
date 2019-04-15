@@ -59,7 +59,9 @@ RUN pip install -U \
 		catboost \
 		opencv-python \
 		tqdm \
-		tslearn
+		tslearn \
+                bert-serving-server \
+                bert-serving-client
 
 # Install OpenCV + HDF5
 RUN apt-get update && apt-get install -y \
