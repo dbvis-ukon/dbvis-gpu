@@ -55,8 +55,10 @@ RUN pip install -U \
 		xgboost \
 		catboost \
 		opencv-python \
-        bash_kernel \
-		tqdm
+                bash_kernel \
+		tqdm \
+                bert-serving-server \
+                bert-serving-client
 
 RUN pip install tslearn
 
