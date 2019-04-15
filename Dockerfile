@@ -36,12 +36,15 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('crayon', 'pbdZMQ', 'devtools', 'IRdisplay'), repos='http://cran.us.r-project.org')"
 RUN R -e "devtools::install_github(paste0('IRkernel/', c('repr', 'IRdisplay', 'IRkernel')))"
 
+RUN pip install --upgrade pip
+
 # Install virtualenv to let users install more libs
 RUN pip install -U virtualenv
 
+RUN pip install -U cython
+
 # Install KERAS + SCIKIT + Data Science Libs
 RUN pip install -U \
-		cython \
 		scipy \
 		numpy \
 		keras \
@@ -135,10 +138,24 @@ RUN jupyter contrib nbextension install --user && \
     jupyter nbextension enable --py nbzip && \
     jupyter nbextension enable --py rise
 
+
 # Install anaconda
 
-RUN curl -O https://repo.anaconda.com/archive/Anaconda2-2019.03-Linux-x86_64.sh
-RUN bash Anaconda2-2019.03-Linux-x86_64.sh -b
+## TODO fix this
 
-RUN conda install nb_conda
+#USER root
+
+#RUN curl -O https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+#RUN bash Anaconda3-2019.03-Linux-x86_64.sh -b -p "/home/$NB_USER/anaconda3"
+
+#RUN chown -R $NB_USER:dbvis /home/$NB_USER/anaconda3
+
+#USER $NB_USER
+
+#RUN echo "export PATH=~/anaconda3/bin:$PATH" >> ~/.bashrc
+#RUN /bin/bash -c "source ~/.bashrc"
+
+#RUN export PATH=~/anaconda3/bin:$PATH
+
+#RUN /bin/bash -c "conda install -c anaconda cython"
 
