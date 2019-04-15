@@ -132,6 +132,8 @@ RUN jupyter contrib nbextension install --user && \
 
 USER $NB_USER
 
+echo "alias virtualenv='virtualenv --system-site-packages'" >> ~/.bashrc
+
 # Install and enable nbextensions
 RUN jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
