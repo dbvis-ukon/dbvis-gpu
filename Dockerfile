@@ -137,8 +137,8 @@ RUN jupyter contrib nbextension install --user && \
 
 # Install anaconda
 
-curl -O https://repo.anaconda.com/archive/Anaconda2-2019.03-Linux-x86_64.sh
-bash Anaconda2-2019.03-Linux-x86_64.sh -b
+RUN curl -O https://repo.anaconda.com/archive/Anaconda2-2019.03-Linux-x86_64.sh
+RUN bash Anaconda2-2019.03-Linux-x86_64.sh -b
 
-conda install nb_conda
+RUN conda install nb_conda
 
