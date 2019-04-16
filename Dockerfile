@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
 		libssl-dev \
 		graphviz \
 		libgraphviz-dev \
+                libpq-dev \
 		&& \
 	apt-get clean && \
 	apt-get autoremove && \
@@ -36,11 +37,15 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('crayon', 'pbdZMQ', 'devtools', 'IRdisplay'), repos='https://ftp.fau.de/cran/')"
 RUN R -e "devtools::install_github(paste0('IRkernel/', c('repr', 'IRdisplay', 'IRkernel')))"
 
+RUN pip install --upgrade pip
+
+RUN pip install -U virtualenv
+
+RUN pip install -U cython
+
 # Install KERAS + SCIKIT + Data Science Libs
 RUN pip install -U \
-		cython \
 		scipy \
-		numpy \
 		keras \
 		scikit-learn \
 		psycopg2 \
@@ -134,7 +139,7 @@ RUN jupyter contrib nbextension install --user && \
 
 USER $NB_USER
 
-echo "alias virtualenv='virtualenv --system-site-packages'" >> ~/.bashrc
+RUN echo "alias virtualenv='virtualenv --system-site-packages'" >> ~/.bashrc
 
 # Install and enable nbextensions
 RUN jupyter contrib nbextension install --user && \
@@ -145,7 +150,7 @@ RUN jupyter contrib nbextension install --user && \
 
 # Install anaconda
 
-curl -O https://repo.anaconda.com/archive/Anaconda2-2019.03-Linux-x86_64.sh
-bash Anaconda2-2019.03-Linux-x86_64.sh -b
+#curl -O https://repo.anaconda.com/archive/Anaconda2-2019.03-Linux-x86_64.sh
+#bash Anaconda2-2019.03-Linux-x86_64.sh -b
 
-conda install nb_conda
+#conda install nb_conda
