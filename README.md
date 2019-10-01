@@ -27,6 +27,50 @@ Afterward, you can navigate to your script and run it with the command line.
 
 # Advises
 
+## Virtual Environment
+
+The server is equipped with the many python frameworks and libraries. In case you need additional libraries you can create a virtual environment to add them and start Jupyter notebook via the new virtual environment. Use the following snippet to create a new virtual environment:
+
+1. Open a terminal:  
+  ```
+  ## CREATE A NEW VIRTUAL ENVIRONMENT ##
+  bash         # start a bash
+  cd           # navigate to the home directory
+  name='venv'  # specify the name of your virtual environment
+  virtualenv --system-site-packages $name  # create the virtual environment + add all already installed packages
+  source $name/bin/activate  # activate the virtual environment
+  pip install --upgrade pip  # upgrade pip
+  ipython kernel install --user --name=$name   # install in user space
+  sed -i -e 's|/usr/bin/python3|'${HOME}'/'$name'/bin/python|g' $HOME'/.local/share/jupyter/kernels/'$name'/kernel.json' # replace python binary of the new kernel with the kernel of the new virtual environment
+  ```
+2. Via the following snippets you can add new packages to the virtual environment:  
+  ```
+  ## ADD PACKAGES TO A VIRTUAL ENVIRONMENT ##
+  bash
+  cd
+  name='venv'
+  source $name/bin/activate
+  pip install <package>
+  ```
+
+3. Now you can create new Jupyter notebooks using the virtual environment from the *New* tab in the jupyter home directory.
+
+## GPU Status
+
+You can see the available GPUs as well as the available VRAM by typing `nvidia-smi` in a terminal.
+
+## GPU Usage
+
+Please make sure to just use **only one** GPU at the same time. After checking for an available GPU, you can specify the GPU inside your Jupyter notebooks using the following snippet:
+
+```
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"]="0"         # the ID of the GPU (view via nvidia-smi)
+```
+
+**After finishing using the GPUs, please explicitly stop your Juypter notebooks, since otherwise the VRAM occupied might not be freed.**
+
 ## Tensorflow
 
 If you are using Tensorflow or a framework, which runs Tensorflow in the background, it is advised to use:
