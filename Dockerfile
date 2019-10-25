@@ -36,12 +36,15 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('crayon', 'pbdZMQ', 'devtools', 'IRdisplay'), repos='http://cran.us.r-project.org')"
 RUN R -e "devtools::install_github(paste0('IRkernel/', c('repr', 'IRdisplay', 'IRkernel')))"
 
+RUN pip install --upgrade pip
+
 # Install virtualenv to let users install more libs
 RUN pip install -U virtualenv
 
+RUN pip install -U cython
+
 # Install KERAS + SCIKIT + Data Science Libs
 RUN pip install -U \
-		cython \
 		scipy \
 		numpy \
 		keras \
@@ -59,7 +62,10 @@ RUN pip install -U \
 		catboost \
 		opencv-python \
 		tqdm \
-		tslearn
+		tslearn \
+        bert-serving-server \
+        bert-serving-client \
+        handout
 
 # Install OpenCV + HDF5
 RUN apt-get update && apt-get install -y \
@@ -80,8 +86,7 @@ RUN apt-get update && apt-get install -y \
 	rm -rf /var/lib/apt/lists/*
 
 # Install PYTORCH
-RUN pip install https://download.pytorch.org/whl/cu100/torch-1.0.1.post2-cp35-cp35m-linux_x86_64.whl && \
-    pip install torchvision
+RUN pip install torch===1.3.0 torchvision===0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
 
 # TensorBoard
 EXPOSE 6006
@@ -123,9 +128,33 @@ RUN jupyter contrib nbextension install --user && \
 
 USER $NB_USER
 
+# add alias to include system site packages into virtualenvs
+RUN echo "alias virtualenv='virtualenv --system-site-packages'" >> ~/.bashrc
+
 # Install and enable nbextensions
 RUN jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
     jupyter tensorboard enable --user && \
     jupyter nbextension enable --py nbzip && \
     jupyter nbextension enable --py rise
+
+
+# Install anaconda
+
+## TODO fix this
+
+#USER root
+
+#RUN curl -O https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+#RUN bash Anaconda3-2019.03-Linux-x86_64.sh -b -p "/home/$NB_USER/anaconda3"
+
+#RUN chown -R $NB_USER:dbvis /home/$NB_USER/anaconda3
+
+#USER $NB_USER
+
+#RUN echo "export PATH=~/anaconda3/bin:$PATH" >> ~/.bashrc
+#RUN /bin/bash -c "source ~/.bashrc"
+
+#RUN export PATH=~/anaconda3/bin:$PATH
+
+#RUN /bin/bash -c "conda install -c anaconda cython"
